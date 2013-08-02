@@ -243,7 +243,7 @@ namespace ThreeSixtySharp
             request.AddParameter("id", doc.Document_Id);
             request.AddParameter("rev", revision);
 
-            Execute(request);p
+            Execute(request);
         }
     }
 }
