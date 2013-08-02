@@ -1,7 +1,7 @@
 ThreeSixtySharp
 ===============
 
-ThreeSixtySharp is a C# library for working with Autodesk's BIM 360 Rest API.  The goal of this library is to present client code with easy to work with objects without dealing with a lot of the webby bits.
+ThreeSixtySharp is a C# library for working with Autodesk's BIM 360 Field Rest API.  The goal of this library is to present client code with easy to work with objects without dealing with a lot of the webby bits.  It is possible this could be expanded to work with Glue as well in the future.
 
 
 ##Basic Usage
