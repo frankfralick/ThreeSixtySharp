@@ -34,7 +34,7 @@ namespace ThreeSixtySharp
         /// <param name="request"></param>
         /// <returns></returns>
         public T Execute<T>(RestRequest request) where T : new()
-        {
+        {   
             var client = new RestClient();
             client.BaseUrl = BaseUrl;
             var response = client.Execute<T>(request);
@@ -126,7 +126,7 @@ namespace ThreeSixtySharp
         }
 
         /// <summary>
-        /// Publish a file.
+        /// Publish a file that is new to the project.
         /// </summary>
         /// <param name="ticket"></param>
         /// <param name="project"></param>
@@ -137,32 +137,21 @@ namespace ThreeSixtySharp
         /// <param name="caption"></param>
         /// <param name="allow_replace"></param>
         /// <returns></returns>
-        public ThreeSixtySharp.Objects.File Publish(AuthTicket ticket,
+        public ThreeSixtySharp.Objects.File PublishNew(AuthTicket ticket,
                                     Project project,
                                     Document_Path doc_path,
                                     string origin_full_filename,
-                                    string document_id = null,
                                     List<string> tags = null,
-                                    string caption = null,
-                                    bool allow_replace = false)
+                                    string caption = null)
         {
             var request = new RestRequest(Method.POST);
-            int replace = 0;
-            if (allow_replace == true)
-            {
-                replace = 1;
-            }
-            request.Resource = string.Format("api/library/publish?replace={0}", replace);
+            request.Resource = "api/library/publish?replace=0";
             request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
             request.AddParameter("directory", doc_path.Path);
             request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
             request.AddFile("Filedata", origin_full_filename);
 
-            if (document_id != null)
-            {
-                request.AddParameter("document_id", document_id);
-            }
             if (tags != null)
             {
                 request.AddParameter("tags", string.Join(",", tags));
@@ -174,6 +163,98 @@ namespace ThreeSixtySharp
 
             return Execute<ThreeSixtySharp.Objects.File>(request);
         }
+
+
+
+        /// <summary>
+        /// Publish a revision to a file that will be a new revision to an existing document.
+        /// </summary>
+        /// <param name="ticket"></param>
+        /// <param name="project"></param>
+        /// <param name="doc_path"></param>
+        /// <param name="origin_full_filename"></param>
+        /// <param name="document_id">The File.Document_Id parameter of the file to revise.</param>
+        /// <param name="tags"></param>
+        /// <param name="caption"></param>
+        /// <param name="allow_replace"></param>
+        /// <returns></returns>
+        public ThreeSixtySharp.Objects.File PublishRevision(AuthTicket ticket,
+                                    Project project,
+                                    Document_Path doc_path,
+                                    string origin_full_filename,
+                                    string document_id,
+                                    List<string> tags = null,
+                                    string caption = null)
+        {
+            var request = new RestRequest(Method.POST);
+            //Not sure if how specifying optional parameter "document_id" and "replace" are different.
+            request.Resource = "api/library/publish?replace=1";
+            //request.Resource = "api/library/publish"; 
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("directory", doc_path.Path);
+            request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
+            request.AddParameter("document_id", document_id);
+            request.AddFile("Filedata", origin_full_filename);
+
+            if (tags != null)
+            {
+                request.AddParameter("tags", string.Join(",", tags));
+            }
+            if (caption != null)
+            {
+                request.AddParameter("caption", caption);
+            }
+
+
+            return Execute<ThreeSixtySharp.Objects.File>(request);
+        }
+
+
+        /// <summary>
+        /// Publish a file that will become the new base revision of a previously existing file.  Beware.
+        /// </summary>
+        /// <param name="ticket"></param>
+        /// <param name="project"></param>
+        /// <param name="doc_path"></param>
+        /// <param name="origin_full_filename"></param>
+        /// <param name="document_id">The File.Document_Id parameter of the file to revise.</param>
+        /// <param name="tags"></param>
+        /// <param name="caption"></param>
+        /// <param name="allow_replace"></param>
+        /// <returns></returns>
+        public ThreeSixtySharp.Objects.File PublishBaseRevision(AuthTicket ticket,
+                                    Project project,
+                                    Document_Path doc_path,
+                                    string origin_full_filename,
+                                    string document_id,
+                                    List<string> tags = null,
+                                    string caption = null)
+        {
+            var request = new RestRequest(Method.POST);
+            //Not sure if how specifying optional parameter "document_id" and "replace" are different.
+            request.Resource = "api/library/publish?replace=1";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("directory", doc_path.Path);
+            request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
+            //I don't think passing document_id is necessary for making the new file the base version.
+            //request.AddParameter("document_id", document_id);
+            request.AddFile("Filedata", origin_full_filename);
+
+            if (tags != null)
+            {
+                request.AddParameter("tags", string.Join(",", tags));
+            }
+            if (caption != null)
+            {
+                request.AddParameter("caption", caption);
+            }
+
+            return Execute<ThreeSixtySharp.Objects.File>(request);
+        }
+
+
 
         /// <summary>
         /// Awaitable upload method for use with async calling methods.  
