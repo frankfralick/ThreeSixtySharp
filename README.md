@@ -24,8 +24,9 @@ The Project object has a lot of properties, some of which are containers for oth
 Currently this library mainly deals with the "library" realm of BIM 360.  To get a list of File objects:
 
 ```C#
-//You need to pass in one Project object.  This example is using the first one from the example above.
-//If you are using System.IO you will need to use the full name of the File object ThreeSixtySharp.Objects.File.
+//You need to pass in one Project object.  This example is using the first one from the example
+//above.  If you are using System.IO you will need to use the full name of the File 
+//object ThreeSixtySharp.Objects.File.
 List<File> files = ts.GetAllFiles(ticket, projects[0]);
 ```
 
@@ -33,8 +34,9 @@ If you want to upload a file:
 
 ```C#
 string my_file_path = "C:\\myfile.3dm";
-//The Project object you want to upload to has a Document_Paths property that is a list of Document_Path instances.
-//This returns a File object as well containing the metadata of the file you just uploaded.
+//The Project object you want to upload to has a Document_Paths property that is a list 
+//of Document_Path instances.  This returns a File object as well containing the metadata 
+//of the file you just uploaded.
 ThreeSixtySharp.Objects.File upload_file = ts.Publish(ticket, 
                                                       projects[0], 
                                                       projects[0].Document_Paths[0],
