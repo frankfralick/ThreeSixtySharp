@@ -51,7 +51,7 @@
     <Compile Include="Objects\Project.cs" />
     <Compile Include="Objects\Ticket.cs" />
     <Compile Include="Objects\User_Role.cs" />
-    <Compile Include="ThreeSixtySharpBase.cs" />
+    <Compile Include="Field.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

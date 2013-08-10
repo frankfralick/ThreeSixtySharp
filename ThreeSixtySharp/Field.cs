@@ -10,22 +10,24 @@ using ThreeSixtySharp.Objects;
 
 namespace ThreeSixtySharp
 {
-    public class ThreeSixtySharpBase
+    public class Field
     {
         const string BaseUrl = "https://manage.velasystems.com";
         private string Username { get; set; }
         private string Password { get; set; }
 
+
         /// <summary>
         /// Constructor for ThreeSixtySharpBase.
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        public ThreeSixtySharpBase(string username, string password)
+        /// <param name="username">User's username.</param>
+        /// <param name="password">User's password.</param>
+        public Field(string username, string password)
         {
             Username = username;
             Password = password;
         }
+
 
         /// <summary>
         /// Generic execute method for use by other methods returning a ThreeSixtySharp.Objects.XXXXXX instance.
@@ -47,6 +49,10 @@ namespace ThreeSixtySharp
         }
 
 
+        /// <summary>
+        /// Execute method for RestRequest.
+        /// </summary>
+        /// <param name="request"></param>
         public void Execute(RestRequest request) 
         {
             var client = new RestClient();
@@ -57,6 +63,7 @@ namespace ThreeSixtySharp
                 throw response.ErrorException;
             }
         }
+
 
         /// <summary>
         /// Generic execute method that returns a Task rather that result.Data.
@@ -80,7 +87,7 @@ namespace ThreeSixtySharp
         /// <summary>
         /// This is the login method.  It returns a "ticket" that must be supplied with subsequent requests.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns instance of ThreeSixtySharp.Objects.AuthTicket.</returns>
         public AuthTicket GetTicket()
         {
             var request = new RestRequest(Method.GET);
@@ -88,23 +95,72 @@ namespace ThreeSixtySharp
             request.RootElement = "";
             request.AddParameter("username", Username, ParameterType.GetOrPost);
             request.AddParameter("password", Password, ParameterType.GetOrPost);
+
             return Execute<AuthTicket>(request);
         }
+
+
+        /// <summary>
+        /// Expires a ticket for access to a specific project.
+        /// </summary>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return ticket for.</param>
+        public void ReturnTicketOneProject(AuthTicket ticket, Project project)
+        {
+            var request = new RestRequest(Method.POST);
+            request.Resource = "api/logout";
+            request.AddParameter("ticket", ticket);
+            request.AddParameter("project_id", project.Project_ID);
+
+            Execute(request);
+        }
+
+
+        /// <summary>
+        /// Iterates through list of projects current user has access to and 
+        /// expires the ticket for each one.  
+        /// </summary>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        public void ReturnTicketAllProjects(AuthTicket ticket)
+        {
+            List<Project> projects = GetProjects(ticket);
+            foreach (Project project in projects)
+            {
+                var request = new RestRequest(Method.POST);
+                request.Resource = "api/logout";
+                request.AddParameter("ticket", ticket);
+                request.AddParameter("project_id", project.Project_ID);
+
+                Execute(request);
+            }
+        }
+
 
         /// <summary>
         /// Get a list of Project objects that the owner of the ticket has access to.
         /// </summary>
-        /// <param name="ticket"></param>
-        /// <returns></returns>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <returns>List of ThreeSixtySharp.Objects.Project instances that the owner of the 
+        /// AuthTicket has access to.</returns>
         public List<Project> GetProjects(AuthTicket ticket)
         {
             var request = new RestRequest(Method.GET);
             request.Resource = "api/projects";
             request.AddParameter("ticket", ticket.Ticket);
+            
             return Execute<List<Project>>(request);
         }
 
 
+        /// <summary>
+        /// Returns a list of all ThreeSixtySharp.Objects.File objects for a specified Project, 
+        /// and optionally for just a specified Document_Path.
+        /// </summary>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+        /// <param name="path">Optional ThreeSixtySharp.Objects.Document_Path instance that filters returned File instances
+        /// to just those located at the Document_Path.Path location.</param>
+        /// <returns>List of ThreeSixtySharp.Object.File instances.</returns>
         public List<ThreeSixtySharp.Objects.File> GetAllFiles(AuthTicket ticket, Project project, Document_Path path = null)
         {
             var request = new RestRequest(Method.GET);
@@ -125,11 +181,12 @@ namespace ThreeSixtySharp
             return Execute<List<ThreeSixtySharp.Objects.File>>(request);
         }
 
+
         /// <summary>
         /// Publish a file that is new to the project.
         /// </summary>
-        /// <param name="ticket"></param>
-        /// <param name="project"></param>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
         /// <param name="doc_path"></param>
         /// <param name="origin_full_filename"></param>
         /// <param name="document_id"></param>
@@ -165,15 +222,14 @@ namespace ThreeSixtySharp
         }
 
 
-
         /// <summary>
         /// Publish a revision to a file that will be a new revision to an existing document.
         /// </summary>
-        /// <param name="ticket"></param>
-        /// <param name="project"></param>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
         /// <param name="doc_path"></param>
         /// <param name="origin_full_filename"></param>
-        /// <param name="document_id">The File.Document_Id parameter of the file to revise.</param>
+        /// <param name="document_id">The ThreeSixtySharp.Objects.File.Document_Id parameter of the file to revise.</param>
         /// <param name="tags"></param>
         /// <param name="caption"></param>
         /// <param name="allow_replace"></param>
@@ -187,9 +243,8 @@ namespace ThreeSixtySharp
                                     string caption = null)
         {
             var request = new RestRequest(Method.POST);
-            //Not sure if how specifying optional parameter "document_id" and "replace" are different.
+            
             request.Resource = "api/library/publish?replace=1";
-            //request.Resource = "api/library/publish"; 
             request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
             request.AddParameter("directory", doc_path.Path);
@@ -201,11 +256,11 @@ namespace ThreeSixtySharp
             {
                 request.AddParameter("tags", string.Join(",", tags));
             }
+
             if (caption != null)
             {
                 request.AddParameter("caption", caption);
             }
-
 
             return Execute<ThreeSixtySharp.Objects.File>(request);
         }
@@ -214,11 +269,11 @@ namespace ThreeSixtySharp
         /// <summary>
         /// Publish a file that will become the new base revision of a previously existing file.  Beware.
         /// </summary>
-        /// <param name="ticket"></param>
-        /// <param name="project"></param>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
         /// <param name="doc_path"></param>
         /// <param name="origin_full_filename"></param>
-        /// <param name="document_id">The File.Document_Id parameter of the file to revise.</param>
+        /// <param name="document_id">The ThreeSixtySharp.Objects.File.Document_Id parameter of the file to revise.</param>
         /// <param name="tags"></param>
         /// <param name="caption"></param>
         /// <param name="allow_replace"></param>
@@ -232,7 +287,6 @@ namespace ThreeSixtySharp
                                     string caption = null)
         {
             var request = new RestRequest(Method.POST);
-            //Not sure if how specifying optional parameter "document_id" and "replace" are different.
             request.Resource = "api/library/publish?replace=1";
             request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
@@ -255,12 +309,11 @@ namespace ThreeSixtySharp
         }
 
 
-
         /// <summary>
         /// Awaitable upload method for use with async calling methods.  
         /// </summary>
-        /// <param name="ticket"></param>
-        /// <param name="project"></param>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
         /// <param name="doc_path"></param>
         /// <param name="origin_full_filename"></param>
         /// <param name="document_id"></param>
@@ -277,6 +330,8 @@ namespace ThreeSixtySharp
                                     string caption = null,
                                     bool allow_replace = false)
         {
+
+            //TODO This method to be split out into PublishNewAsync, PublishRevisionAsync, and PublishBaseRevisionAsync.
             var request = new RestRequest(Method.POST);
             int replace = 0;
             if (allow_replace == true)
@@ -308,13 +363,13 @@ namespace ThreeSixtySharp
 
 
         /// <summary>
-        /// Method for deleting a file.  Hopefully this is the only method that deletes files.
+        /// Delete a specific revision of a file.
         /// </summary>
-        /// <param name="ticket"></param>
-        /// <param name="project"></param>
-        /// <param name="doc"></param>
-        /// <param name="revision"></param>
-        public void DeleteFile(AuthTicket ticket, Project project, ThreeSixtySharp.Objects.File doc, int revision)
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+        /// <param name="doc">ThreeSixtySharp.Objects.File instance to delete.</param>
+        /// <param name="revision">Specify which revision of the file to delete.  Revisions start at 0 and increment up.</param>
+        public void DeleteRevision(AuthTicket ticket, Project project, ThreeSixtySharp.Objects.File doc, int revision)
         {   
             var request = new RestRequest(Method.POST);
 
@@ -326,8 +381,55 @@ namespace ThreeSixtySharp
 
             Execute(request);
         }
+
+
+        /// <summary>
+        /// Delete all revisions of a given file.
+        /// </summary>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+        /// <param name="doc">ThreeSixtySharp.Objects.File instance to delete.</param>
+        public void DeleteAllRevisions(AuthTicket ticket, Project project, ThreeSixtySharp.Objects.File doc)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/library/delete";
+            request.AddParameter("ticket", ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("id", doc.Document_Id);
+            request.AddParameter("rev", "nil");
+
+            Execute(request);
+        }
+
+        
+        
+
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

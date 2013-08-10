@@ -42,6 +42,10 @@ namespace ThreeSixtySharp.Objects
         public int Revision_Count { get; set; }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public bool IsRevision()
         {
             var id = System.IO.Path.GetFileNameWithoutExtension(Filename).Split('_').Last();
@@ -57,6 +61,11 @@ namespace ThreeSixtySharp.Objects
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string Get_Original_Name()
         {
             if (IsRevision() && Base_Revision_Id != null)
