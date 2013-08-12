@@ -244,11 +244,19 @@ namespace ThreeSixtySharp
         {
             var request = new RestRequest(Method.POST);
             
-            request.Resource = "api/library/publish?replace=1";
+            request.Resource = "api/library/publish?replace=0";
+            //I've tried these two:
+            //request.Resource = "api/library/publish?replace=1";
+            //request.Resource = "api/library/publish";
+
             request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
             request.AddParameter("directory", doc_path.Path);
             request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
+            //I've tried these as well:
+            //request.AddParameter("filename", "ProjectJSON_2.txt");
+            //request.AddParameter("filename", "ProjectJSON_3.txt");
+
             request.AddParameter("document_id", document_id);
             request.AddFile("Filedata", origin_full_filename);
 
@@ -402,8 +410,21 @@ namespace ThreeSixtySharp
             Execute(request);
         }
 
-        
-        
+
+        public ThreeSixtySharp.Objects.File GetFileMetadata(AuthTicket ticket, Project project, string document_id, int revision_number)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/library/file/{id}/{type}/{rev}";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("id", document_id, ParameterType.UrlSegment);
+            request.AddParameter("type", "metadata", ParameterType.UrlSegment);
+            request.AddParameter("rev", revision_number, ParameterType.UrlSegment);
+            request.RootElement = "document";
+
+            return Execute<ThreeSixtySharp.Objects.File>(request);
+        }
 
     }
 }

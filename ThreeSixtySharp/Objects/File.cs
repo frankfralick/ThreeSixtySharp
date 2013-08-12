@@ -40,7 +40,7 @@ namespace ThreeSixtySharp.Objects
             } 
         }
         public int Revision_Count { get; set; }
-
+        public List<string> Tags { get; set; }
 
         /// <summary>
         /// 
