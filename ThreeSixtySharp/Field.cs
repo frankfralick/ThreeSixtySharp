@@ -426,6 +426,20 @@ namespace ThreeSixtySharp
             return Execute<ThreeSixtySharp.Objects.File>(request);
         }
 
+        public List<ThreeSixtySharp.Objects.File> GetFileMetadataAllRevisions(AuthTicket ticket, Project project, string document_id)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/library/file/{id}/{type}/{rev}";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("id", document_id, ParameterType.UrlSegment);
+            request.AddParameter("type", "metadata", ParameterType.UrlSegment);
+            request.RootElement = "document";
+
+            return Execute<List<ThreeSixtySharp.Objects.File>>(request);
+        }
+
     }
 }
 
