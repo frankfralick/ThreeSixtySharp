@@ -40,11 +40,26 @@ namespace ThreeSixtySharp.Objects
             } 
         }
         public int Revision_Count { get; set; }
+
+        //These are properties of the File instance that can be 
+        //accessed through Field.GetMetaData.
         public List<string> Tags { get; set; }
+        public DateTime Json_Updated_At { get; set; }
+        public DateTime Json_Mod_Date { get; set; }
+        public DateTime Json_Create_Date { get; set; }
+        public string User_Id { get; set; }
+
+        //This needs to be reworked so a consistant api is provided and file.Document_Id can
+        //be called on the result of a call to Field.GetMetadata.  
+        public string Id { get; set; }
+        public DateTime? VV_Img_Timestamp { get; set; }
+ 
+
         
 
         /// <summary>
-        /// 
+        /// Identifies if, using Field's revision naming convention, 
+        /// the File instance is a revision.
         /// </summary>
         /// <returns></returns>
         public bool IsRevision()

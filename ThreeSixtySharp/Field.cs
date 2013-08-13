@@ -426,6 +426,7 @@ namespace ThreeSixtySharp
             return Execute<ThreeSixtySharp.Objects.File>(request);
         }
 
+
         public List<ThreeSixtySharp.Objects.File> GetFileMetadataAllRevisions(AuthTicket ticket, Project project, string document_id)
         {
             var request = new RestRequest(Method.POST);
@@ -440,6 +441,33 @@ namespace ThreeSixtySharp
             return Execute<List<ThreeSixtySharp.Objects.File>>(request);
         }
 
+
+        public void DownloadFile(AuthTicket ticket, Project project, string document_id, int revision_number)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/library/file/{id}/{type}/{rev}";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("id", document_id, ParameterType.UrlSegment);
+            request.AddParameter("type", "original", ParameterType.UrlSegment);
+            request.AddParameter("rev", revision_number);
+
+            var client = new RestClient();
+            client.BaseUrl = BaseUrl;
+            client.ExecuteAsync(request, response =>
+                {
+                    if (response.ErrorException != null)
+                    {
+                        throw response.ErrorException;
+                    }
+                    else
+                    {
+                        byte[] file_bytes = response.RawBytes;
+                        //in progress
+                    }
+                });
+        }
     }
 }
 
