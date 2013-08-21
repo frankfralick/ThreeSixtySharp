@@ -172,8 +172,10 @@ namespace ThreeSixtySharp
 
             else
             {
-                request.Resource = "api/library/all_files/:{path.Path}";
-                request.AddParameter("directory", path.Path, ParameterType.UrlSegment);
+                //request.Resource = "api/library/all_files/:{path.Path}";
+                request.Resource = "api/library/all_files/{directory}";
+                //request.AddParameter("directory", path.Path, ParameterType.UrlSegment);
+                request.AddParameter("directory", path.Path);
             }
 
             request.AddParameter("ticket", ticket.Ticket);
@@ -382,7 +384,7 @@ namespace ThreeSixtySharp
             var request = new RestRequest(Method.POST);
 
             request.Resource = "api/library/delete";
-            request.AddParameter("ticket", ticket);
+            request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
             request.AddParameter("id", doc.Document_Id);
             request.AddParameter("rev", revision);
@@ -402,7 +404,7 @@ namespace ThreeSixtySharp
             var request = new RestRequest(Method.POST);
 
             request.Resource = "api/library/delete";
-            request.AddParameter("ticket", ticket);
+            request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
             request.AddParameter("id", doc.Document_Id);
             request.AddParameter("rev", "nil");
@@ -468,6 +470,40 @@ namespace ThreeSixtySharp
                     }
                 });
         }
+
+
+        public List<Area> GetAreas(AuthTicket ticket, Project project, DateTime? maxDate = null)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/areas";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+
+            if (maxDate != null)
+            {
+                request.AddParameter("max_date", maxDate.ToString()); //Not tested
+            }
+
+            //request.RootElement = "";
+
+            //return Execute<List<Area>>(request);
+            return Execute<List<Area>>(request);
+        }
+
+
+        public List<Issue> GetIssues(AuthTicket ticket, Project project)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/get_issues";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+
+
+            return Execute<List<Issue>>(request);
+        }
+
     }
 }
 

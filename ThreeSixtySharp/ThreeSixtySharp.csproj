@@ -42,10 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\Area.cs" />
     <Compile Include="Objects\Condition.cs" />
     <Compile Include="Objects\Document_Path.cs" />
     <Compile Include="Objects\File.cs" />
     <Compile Include="Objects\Filter.cs" />
+    <Compile Include="Objects\Issue.cs" />
     <Compile Include="Objects\Issue_Filter.cs" />
     <Compile Include="Objects\RealmPermission.cs" />
     <Compile Include="Objects\Project.cs" />
