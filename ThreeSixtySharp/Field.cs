@@ -164,20 +164,12 @@ namespace ThreeSixtySharp
         public List<ThreeSixtySharp.Objects.File> GetAllFiles(AuthTicket ticket, Project project, Document_Path path = null)
         {
             var request = new RestRequest(Method.GET);
-
-            if (path == null)
-            {
-                request.Resource = "api/library/all_files";
-            }
-
-            else
-            {
-                //request.Resource = "api/library/all_files/:{path.Path}";
-                request.Resource = "api/library/all_files/{directory}";
-                //request.AddParameter("directory", path.Path, ParameterType.UrlSegment);
+            request.Resource = "api/library/all_files";
+            if (path != null)
+            { 
                 request.AddParameter("directory", path.Path);
             }
-
+            
             request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
             return Execute<List<ThreeSixtySharp.Objects.File>>(request);
@@ -236,6 +228,7 @@ namespace ThreeSixtySharp
         /// <param name="caption"></param>
         /// <param name="allow_replace"></param>
         /// <returns></returns>
+        /// *****This method is not working, possibly issue with the Field API.  There is a support ticket being worked on.
         public ThreeSixtySharp.Objects.File PublishRevision(AuthTicket ticket,
                                     Project project,
                                     Document_Path doc_path,
@@ -302,13 +295,11 @@ namespace ThreeSixtySharp
             request.AddParameter("project_id", project.Project_ID);
             request.AddParameter("directory", doc_path.Path);
             request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
-            //I don't think passing document_id is necessary for making the new file the base version.
-            //request.AddParameter("document_id", document_id);
             request.AddFile("Filedata", origin_full_filename);
 
             if (tags != null)
             {
-                request.AddParameter("tags", string.Join(",", tags));
+                request.AddParameter("tags", string.Join(", ", tags));
             }
             if (caption != null)
             {
@@ -425,7 +416,17 @@ namespace ThreeSixtySharp
             request.AddParameter("rev", revision_number, ParameterType.UrlSegment);
             request.RootElement = "document";
 
-            return Execute<ThreeSixtySharp.Objects.File>(request);
+            ThreeSixtySharp.Objects.File metaDataFile = Execute<ThreeSixtySharp.Objects.File>(request);
+            if (metaDataFile.Tags != null)
+            {
+                //This is a janky short term fix.  BIM 360 Field returns Tags as an 
+                //array of strings and a custom deserializer needs to be made to parse this
+                //into this list of strings.  This should be ok for now.
+                List<string> parsedTags = metaDataFile.Tags[0].Split(',').ToList();
+                metaDataFile.Tags = parsedTags;
+            }
+
+            return metaDataFile;
         }
 
 

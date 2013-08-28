@@ -54,7 +54,7 @@ namespace ThreeSixtySharp.Objects
         public string Id { get; set; }
         public DateTime? VV_Img_Timestamp { get; set; }
  
-
+        
         
 
         /// <summary>
@@ -99,5 +99,7 @@ namespace ThreeSixtySharp.Objects
                 return null;
 	        }
         }
+
+        
     }
 }
