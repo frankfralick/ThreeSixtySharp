@@ -452,6 +452,32 @@ namespace ThreeSixtySharp
             return metaDataFile;
         }
 
+        public async Task<ThreeSixtySharp.Objects.File> GetFileMetadataAsync(AuthTicket ticket, Project project, string document_id, int revision_number)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/library/file/{id}/{type}/{rev}";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("id", document_id, ParameterType.UrlSegment);
+            request.AddParameter("type", "metadata", ParameterType.UrlSegment);
+            request.AddParameter("rev", revision_number, ParameterType.UrlSegment);
+            request.RootElement = "document";
+
+            Task<ThreeSixtySharp.Objects.File> fileMetaDataTask = ExecuteAsync<ThreeSixtySharp.Objects.File>(request);
+            ThreeSixtySharp.Objects.File metaDataFile = await fileMetaDataTask;
+            if (metaDataFile.Tags != null)
+            {
+                //This is a janky short term fix.  BIM 360 Field returns Tags as an 
+                //array of strings and a custom deserializer needs to be made to parse this
+                //into this list of strings.  This should be ok for now.
+                List<string> parsedTags = metaDataFile.Tags[0].Split(',').ToList();
+                metaDataFile.Tags = parsedTags;
+            }
+
+            return metaDataFile;
+        }
+
 
         public List<ThreeSixtySharp.Objects.File> GetFileMetadataAllRevisions(AuthTicket ticket, Project project, string document_id)
         {
