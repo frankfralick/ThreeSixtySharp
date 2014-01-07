@@ -175,6 +175,29 @@ namespace ThreeSixtySharp
             return Execute<List<ThreeSixtySharp.Objects.File>>(request);
         }
 
+        /// <summary>
+        /// Asynchronous method for returning a list of all ThreeSixtySharp.Objects.File objects for a specified Project, 
+        /// and optionally for just a specified Document_Path.
+        /// </summary>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+        /// <param name="path">Optional ThreeSixtySharp.Objects.Document_Path instance that filters returned File instances
+        /// to just those located at the Document_Path.Path location.</param>
+        /// <returns>List of ThreeSixtySharp.Object.File instances.</returns>
+        public Task<List<ThreeSixtySharp.Objects.File>> GetAllFilesAsync(AuthTicket ticket, Project project, Document_Path path = null)
+        {
+            var request = new RestRequest(Method.GET);
+            request.Resource = "api/library/all_files";
+            if (path != null)
+            {
+                request.AddParameter("directory", path.Path);
+            }
+
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            return ExecuteAsync<List<ThreeSixtySharp.Objects.File>>(request);
+        }
+
 
         /// <summary>
         /// Publish a file that is new to the project.
