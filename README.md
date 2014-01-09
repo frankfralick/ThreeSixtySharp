@@ -45,7 +45,7 @@ ThreeSixtySharp.Objects.File upload_file = field.PublishNew(ticket,
 
 
 
-There are asynchronous methods for uploading files.  They are Field.PublishNewAsync and Field.PublishBaseRevisionAsync if you are programming a UI that you don't want to block (like if you want a spinning progress wheel). There are other methods and properties that I will be documenting as well as adding support for the rest of the API in the future.
+There are asynchronous methods for uploading files.  They are Field.PublishNewAsync and Field.PublishBaseRevisionAsync if you are programming a UI that you don't want to block (like if you want a spinning progress wheel). There are also asynchronous versions of most methods.
 
 #### Disclaimers
 
