@@ -626,10 +626,23 @@ namespace ThreeSixtySharp
                 request.AddParameter("max_date", maxDate.ToString()); //Not tested
             }
 
-            //request.RootElement = "";
-
-            //return Execute<List<Area>>(request);
             return Execute<List<Area>>(request);
+        }
+
+        public Task<List<Area>> GetAreasAsync(AuthTicket ticket, Project project, DateTime? maxDate = null)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/areas";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+
+            if (maxDate != null)
+            {
+                request.AddParameter("max_date", maxDate.ToString()); //Not tested
+            }
+
+            return ExecuteAsync<List<Area>>(request);
         }
 
         public List<Issue> GetIssues(AuthTicket ticket, Project project)
