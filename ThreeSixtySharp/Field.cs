@@ -411,7 +411,6 @@ namespace ThreeSixtySharp
         }
 
 
-
         /// <summary>
         /// Awaitable upload method for use with async calling methods.  
         /// </summary>
@@ -571,6 +570,20 @@ namespace ThreeSixtySharp
             request.RootElement = "document";
 
             return Execute<List<ThreeSixtySharp.Objects.File>>(request);
+        }
+
+        public Task<List<ThreeSixtySharp.Objects.File>> GetFileMetadataAllRevisionsAsync(AuthTicket ticket, Project project, string document_id)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/library/file/{id}/{type}/{rev}";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("id", document_id, ParameterType.UrlSegment);
+            request.AddParameter("type", "metadata", ParameterType.UrlSegment);
+            request.RootElement = "document";
+
+            return ExecuteAsync<List<ThreeSixtySharp.Objects.File>>(request);
         }
 
         public void DownloadFile(AuthTicket ticket, Project project, string document_id, int revision_number)
