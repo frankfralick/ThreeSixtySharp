@@ -653,8 +653,18 @@ namespace ThreeSixtySharp
             request.AddParameter("ticket", ticket.Ticket);
             request.AddParameter("project_id", project.Project_ID);
 
-
             return Execute<List<Issue>>(request);
+        }
+
+        public Task<List<Issue>> GetIssuesAsync(AuthTicket ticket, Project project)
+        {
+            var request = new RestRequest(Method.POST);
+
+            request.Resource = "api/get_issues";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+
+            return ExecuteAsync<List<Issue>>(request);
         }
 
         public byte[] ReadToEnd(System.IO.Stream stream)
