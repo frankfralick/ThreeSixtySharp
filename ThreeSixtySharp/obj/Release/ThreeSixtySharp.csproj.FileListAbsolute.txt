@@ -1,0 +1,8 @@
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\bin\Release\ThreeSixtySharp.dll
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\bin\Release\ThreeSixtySharp.pdb
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\bin\Release\RestSharp.dll
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\bin\Release\RestSharp.xml
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\obj\Release\ThreeSixtySharp.csprojResolveAssemblyReference.cache
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\obj\Release\ThreeSixtySharp.dll
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\obj\Release\ThreeSixtySharp.pdb
+C:\Projects\ThreeSixtySharp\ThreeSixtySharp\bin\Release\ThreeSixtySharp.XML

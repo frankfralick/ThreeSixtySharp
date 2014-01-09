@@ -16,7 +16,6 @@ namespace ThreeSixtySharp
         private string Username { get; set; }
         private string Password { get; set; }
 
-
         /// <summary>
         /// Constructor for ThreeSixtySharpBase.
         /// </summary>
@@ -27,7 +26,6 @@ namespace ThreeSixtySharp
             Username = username;
             Password = password;
         }
-
 
         /// <summary>
         /// Generic execute method for use by other methods returning a ThreeSixtySharp.Objects.XXXXXX instance.
@@ -48,7 +46,6 @@ namespace ThreeSixtySharp
             return response.Data;
         }
 
-
         /// <summary>
         /// Execute method for RestRequest.
         /// </summary>
@@ -63,7 +60,6 @@ namespace ThreeSixtySharp
                 throw response.ErrorException;
             }
         }
-
 
         /// <summary>
         /// Generic execute method that returns a Task rather that result.Data.
@@ -83,7 +79,6 @@ namespace ThreeSixtySharp
             return task_completion_source.Task;
         }
 
-
         /// <summary>
         /// This is the login method.  It returns a "ticket" that must be supplied with subsequent requests.
         /// </summary>
@@ -99,7 +94,6 @@ namespace ThreeSixtySharp
             return Execute<AuthTicket>(request);
         }
 
-
         /// <summary>
         /// Expires a ticket for access to a specific project.
         /// </summary>
@@ -114,7 +108,6 @@ namespace ThreeSixtySharp
 
             Execute(request);
         }
-
 
         /// <summary>
         /// Iterates through list of projects current user has access to and 
@@ -135,7 +128,6 @@ namespace ThreeSixtySharp
             }
         }
 
-
         /// <summary>
         /// Get a list of Project objects that the owner of the ticket has access to.
         /// </summary>
@@ -150,7 +142,6 @@ namespace ThreeSixtySharp
             
             return Execute<List<Project>>(request);
         }
-
 
         /// <summary>
         /// Returns a list of all ThreeSixtySharp.Objects.File objects for a specified Project, 
@@ -198,7 +189,6 @@ namespace ThreeSixtySharp
             return ExecuteAsync<List<ThreeSixtySharp.Objects.File>>(request);
         }
 
-
         /// <summary>
         /// Publish a file that is new to the project.
         /// </summary>
@@ -238,6 +228,51 @@ namespace ThreeSixtySharp
             return Execute<ThreeSixtySharp.Objects.File>(request);
         }
 
+        /// <summary>
+        /// Asynchronous method to publish a file that is new to the project.
+        /// </summary>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+        /// <param name="doc_path"></param>
+        /// <param name="origin_full_filename"></param>
+        /// <param name="document_id"></param>
+        /// <param name="tags"></param>
+        /// <param name="caption"></param>
+        /// <param name="allow_replace"></param>
+        /// <returns></returns>
+        public Task<ThreeSixtySharp.Objects.File> PublishNewAsync(AuthTicket ticket,
+                                    Project project,
+                                    Document_Path doc_path,
+                                    string origin_full_filename,
+                                    List<string> tags = null,
+                                    string caption = null)
+        {
+            var request = new RestRequest(Method.POST);
+            request.Resource = "api/library/publish?replace=0";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("directory", doc_path.Path);
+            request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
+            using (FileStream fileStream = System.IO.File.OpenRead(origin_full_filename))
+            {
+                MemoryStream memStream = new MemoryStream();
+                memStream.SetLength(fileStream.Length);
+                fileStream.Read(memStream.GetBuffer(), 0, (int)fileStream.Length);
+                request.AddFile("Filedata", ReadToEnd(fileStream), origin_full_filename);
+                if (tags != null)
+                {
+                    request.AddParameter("tags", string.Join(",", tags));
+                }
+                if (caption != null)
+                {
+                    request.AddParameter("caption", caption);
+                }
+
+                return ExecuteAsync<ThreeSixtySharp.Objects.File>(request);
+            }
+        }
+
+        
 
         /// <summary>
         /// Publish a revision to a file that will be a new revision to an existing document.
@@ -291,7 +326,6 @@ namespace ThreeSixtySharp
             return Execute<ThreeSixtySharp.Objects.File>(request);
         }
 
-
         /// <summary>
         /// Publish a file that will become the new base revision of a previously existing file.  Beware.
         /// </summary>
@@ -332,6 +366,51 @@ namespace ThreeSixtySharp
             return Execute<ThreeSixtySharp.Objects.File>(request);
         }
 
+        /// <summary>
+        /// Asynchronous method to publish a file that will become the new base revision of a previously existing file.  Beware.
+        /// </summary>
+        /// <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        /// <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+        /// <param name="doc_path"></param>
+        /// <param name="origin_full_filename"></param>
+        /// <param name="document_id">The ThreeSixtySharp.Objects.File.Document_Id parameter of the file to revise.</param>
+        /// <param name="tags"></param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        public Task<ThreeSixtySharp.Objects.File> PublishBaseRevisionAsync(AuthTicket ticket,
+                                    Project project,
+                                    Document_Path doc_path,
+                                    string origin_full_filename,
+                                    string document_id,
+                                    List<string> tags = null,
+                                    string caption = null)
+        {
+            var request = new RestRequest(Method.POST);
+            request.Resource = "api/library/publish?replace=1";
+            request.AddParameter("ticket", ticket.Ticket);
+            request.AddParameter("project_id", project.Project_ID);
+            request.AddParameter("directory", doc_path.Path);
+            request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
+            using (FileStream fileStream = System.IO.File.OpenRead(origin_full_filename))
+            {
+                MemoryStream memStream = new MemoryStream();
+                memStream.SetLength(fileStream.Length);
+                fileStream.Read(memStream.GetBuffer(), 0, (int)fileStream.Length);
+                request.AddFile("Filedata", ReadToEnd(fileStream), origin_full_filename);
+                if (tags != null)
+                {
+                    request.AddParameter("tags", string.Join(",", tags));
+                }
+                if (caption != null)
+                {
+                    request.AddParameter("caption", caption);
+                }
+
+                return ExecuteAsync<ThreeSixtySharp.Objects.File>(request);
+            }
+        }
+
+
 
         /// <summary>
         /// Awaitable upload method for use with async calling methods.  
@@ -367,24 +446,28 @@ namespace ThreeSixtySharp
             request.AddParameter("project_id", project.Project_ID);
             request.AddParameter("directory", doc_path.Path);
             request.AddParameter("filename", System.IO.Path.GetFileName(origin_full_filename));
-            request.AddFile("Filedata", origin_full_filename);
+            using (FileStream fileStream = System.IO.File.OpenRead(origin_full_filename))
+            {
+                MemoryStream memStream = new MemoryStream();
+                memStream.SetLength(fileStream.Length);
+                fileStream.Read(memStream.GetBuffer(), 0, (int)fileStream.Length);
+                request.AddFile("Filedata", ReadToEnd(fileStream), origin_full_filename);
+                if (document_id != null)
+                {
+                    request.AddParameter("document_id", document_id);
+                }
+                if (tags != null)
+                {
+                    request.AddParameter("tags", string.Join(",", tags));
+                }
+                if (caption != null)
+                {
+                    request.AddParameter("caption", caption);
+                }
 
-            if (document_id != null)
-            {
-                request.AddParameter("document_id", document_id);
+                return ExecuteAsync<ThreeSixtySharp.Objects.File>(request);
             }
-            if (tags != null)
-            {
-                request.AddParameter("tags", string.Join(",", tags));
-            }
-            if (caption != null)
-            {
-                request.AddParameter("caption", caption);
-            }
-
-            return ExecuteAsync<ThreeSixtySharp.Objects.File>(request);
         }
-
 
         /// <summary>
         /// Delete a specific revision of a file.
@@ -406,7 +489,6 @@ namespace ThreeSixtySharp
             Execute(request);
         }
 
-
         /// <summary>
         /// Delete all revisions of a given file.
         /// </summary>
@@ -425,7 +507,6 @@ namespace ThreeSixtySharp
 
             Execute(request);
         }
-
 
         public ThreeSixtySharp.Objects.File GetFileMetadata(AuthTicket ticket, Project project, string document_id, int revision_number)
         {
@@ -478,7 +559,6 @@ namespace ThreeSixtySharp
             return metaDataFile;
         }
 
-
         public List<ThreeSixtySharp.Objects.File> GetFileMetadataAllRevisions(AuthTicket ticket, Project project, string document_id)
         {
             var request = new RestRequest(Method.POST);
@@ -492,7 +572,6 @@ namespace ThreeSixtySharp
 
             return Execute<List<ThreeSixtySharp.Objects.File>>(request);
         }
-
 
         public void DownloadFile(AuthTicket ticket, Project project, string document_id, int revision_number)
         {
@@ -521,7 +600,6 @@ namespace ThreeSixtySharp
                 });
         }
 
-
         public List<Area> GetAreas(AuthTicket ticket, Project project, DateTime? maxDate = null)
         {
             var request = new RestRequest(Method.POST);
@@ -541,7 +619,6 @@ namespace ThreeSixtySharp
             return Execute<List<Area>>(request);
         }
 
-
         public List<Issue> GetIssues(AuthTicket ticket, Project project)
         {
             var request = new RestRequest(Method.POST);
@@ -552,6 +629,50 @@ namespace ThreeSixtySharp
 
 
             return Execute<List<Issue>>(request);
+        }
+
+        public byte[] ReadToEnd(System.IO.Stream stream)
+        {
+            long originalPosition = stream.Position;
+            stream.Position = 0;
+
+            try
+            {
+                byte[] readBuffer = new byte[4096];
+
+                int totalBytesRead = 0;
+                int bytesRead;
+
+                while ((bytesRead = stream.Read(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0)
+                {
+                    totalBytesRead += bytesRead;
+
+                    if (totalBytesRead == readBuffer.Length)
+                    {
+                        int nextByte = stream.ReadByte();
+                        if (nextByte != -1)
+                        {
+                            byte[] temp = new byte[readBuffer.Length * 2];
+                            Buffer.BlockCopy(readBuffer, 0, temp, 0, readBuffer.Length);
+                            Buffer.SetByte(temp, totalBytesRead, (byte)nextByte);
+                            readBuffer = temp;
+                            totalBytesRead++;
+                        }
+                    }
+                }
+
+                byte[] buffer = readBuffer;
+                if (readBuffer.Length != totalBytesRead)
+                {
+                    buffer = new byte[totalBytesRead];
+                    Buffer.BlockCopy(readBuffer, 0, buffer, 0, totalBytesRead);
+                }
+                return buffer;
+            }
+            finally
+            {
+                stream.Position = originalPosition;
+            }
         }
 
     }

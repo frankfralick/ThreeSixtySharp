@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ThreeSixtySharp</name>
+    </assembly>
+    <members>
+        <member name="M:ThreeSixtySharp.Objects.File.IsRevision">
+            <summary>
+            Identifies if, using Field's revision naming convention, 
+            the File instance is a revision.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Objects.File.Get_Original_Name">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.#ctor(System.String,System.String)">
+            <summary>
+            Constructor for ThreeSixtySharpBase.
+            </summary>
+            <param name="username">User's username.</param>
+            <param name="password">User's password.</param>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.Execute``1(RestSharp.RestRequest)">
+            <summary>
+            Generic execute method for use by other methods returning a ThreeSixtySharp.Objects.XXXXXX instance.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.Execute(RestSharp.RestRequest)">
+            <summary>
+            Execute method for RestRequest.
+            </summary>
+            <param name="request"></param>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.ExecuteAsync``1(RestSharp.RestRequest)">
+            <summary>
+            Generic execute method that returns a Task rather that result.Data.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.GetTicket">
+            <summary>
+            This is the login method.  It returns a "ticket" that must be supplied with subsequent requests.
+            </summary>
+            <returns>Returns instance of ThreeSixtySharp.Objects.AuthTicket.</returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.ReturnTicketOneProject(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project)">
+            <summary>
+            Expires a ticket for access to a specific project.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return ticket for.</param>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.ReturnTicketAllProjects(ThreeSixtySharp.Objects.AuthTicket)">
+            <summary>
+            Iterates through list of projects current user has access to and 
+            expires the ticket for each one.  
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.GetProjects(ThreeSixtySharp.Objects.AuthTicket)">
+            <summary>
+            Get a list of Project objects that the owner of the ticket has access to.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <returns>List of ThreeSixtySharp.Objects.Project instances that the owner of the 
+            AuthTicket has access to.</returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.GetAllFiles(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path)">
+            <summary>
+            Returns a list of all ThreeSixtySharp.Objects.File objects for a specified Project, 
+            and optionally for just a specified Document_Path.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="path">Optional ThreeSixtySharp.Objects.Document_Path instance that filters returned File instances
+            to just those located at the Document_Path.Path location.</param>
+            <returns>List of ThreeSixtySharp.Object.File instances.</returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.GetAllFilesAsync(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path)">
+            <summary>
+            Asynchronous method for returning a list of all ThreeSixtySharp.Objects.File objects for a specified Project, 
+            and optionally for just a specified Document_Path.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="path">Optional ThreeSixtySharp.Objects.Document_Path instance that filters returned File instances
+            to just those located at the Document_Path.Path location.</param>
+            <returns>List of ThreeSixtySharp.Object.File instances.</returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.PublishNew(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path,System.String,System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Publish a file that is new to the project.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc_path"></param>
+            <param name="origin_full_filename"></param>
+            <param name="document_id"></param>
+            <param name="tags"></param>
+            <param name="caption"></param>
+            <param name="allow_replace"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.PublishNewAsync(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path,System.String,System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Asynchronous method to publish a file that is new to the project.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc_path"></param>
+            <param name="origin_full_filename"></param>
+            <param name="document_id"></param>
+            <param name="tags"></param>
+            <param name="caption"></param>
+            <param name="allow_replace"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.PublishRevision(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path,System.String,System.String,System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Publish a revision to a file that will be a new revision to an existing document.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc_path"></param>
+            <param name="origin_full_filename"></param>
+            <param name="document_id">The ThreeSixtySharp.Objects.File.Document_Id parameter of the file to revise.</param>
+            <param name="tags"></param>
+            <param name="caption"></param>
+            <param name="allow_replace"></param>
+            <returns></returns>
+            *****This method is not working, possibly issue with the Field API.  There is a support ticket being worked on.
+        </member>
+        <member name="M:ThreeSixtySharp.Field.PublishBaseRevision(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path,System.String,System.String,System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Publish a file that will become the new base revision of a previously existing file.  Beware.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc_path"></param>
+            <param name="origin_full_filename"></param>
+            <param name="document_id">The ThreeSixtySharp.Objects.File.Document_Id parameter of the file to revise.</param>
+            <param name="tags"></param>
+            <param name="caption"></param>
+            <param name="allow_replace"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.PublishBaseRevisionAsync(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path,System.String,System.String,System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Asynchronous method to publish a file that will become the new base revision of a previously existing file.  Beware.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc_path"></param>
+            <param name="origin_full_filename"></param>
+            <param name="document_id">The ThreeSixtySharp.Objects.File.Document_Id parameter of the file to revise.</param>
+            <param name="tags"></param>
+            <param name="caption"></param>
+            <param name="allow_replace"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.PublishAsync(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.Document_Path,System.String,System.String,System.Collections.Generic.List{System.String},System.String,System.Boolean)">
+            <summary>
+            Awaitable upload method for use with async calling methods.  
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc_path"></param>
+            <param name="origin_full_filename"></param>
+            <param name="document_id"></param>
+            <param name="tags"></param>
+            <param name="caption"></param>
+            <param name="allow_replace"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.DeleteRevision(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.File,System.Int32)">
+            <summary>
+            Delete a specific revision of a file.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc">ThreeSixtySharp.Objects.File instance to delete.</param>
+            <param name="revision">Specify which revision of the file to delete.  Revisions start at 0 and increment up.</param>
+        </member>
+        <member name="M:ThreeSixtySharp.Field.DeleteAllRevisions(ThreeSixtySharp.Objects.AuthTicket,ThreeSixtySharp.Objects.Project,ThreeSixtySharp.Objects.File)">
+            <summary>
+            Delete all revisions of a given file.
+            </summary>
+            <param name="ticket">ThreeSixtySharp.Objects.AuthTicket instance for current user.</param>
+            <param name="project">ThreeSixtySharp.Objects.Project instance to return files from.</param>
+            <param name="doc">ThreeSixtySharp.Objects.File instance to delete.</param>
+        </member>
+    </members>
+</doc>
